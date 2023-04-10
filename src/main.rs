@@ -22,7 +22,7 @@ impl TestResult {
         let mut speed: f32 = self.to_speed().into();
         let mut unit = 0;
         while speed > 1000.0 && unit < UNITS.len() - 1 {
-            speed /= 1000.0;
+            speed /= 1024.0;
             unit += 1;
         }
         return format!("{}{}", speed, UNITS[unit]);

@@ -8,7 +8,7 @@ use std::io::ErrorKind;
 type SError<T> = Result<T, Box<dyn Error + Send + Sync>>;
 
 static UNITS: [&str; 3] = ["B/s", "KB/s", "MB/s"];
-static TEST_TIME: i64 = 8000;
+static TEST_TIME: i64 = 15000;
 
 fn show_speed(mut speed: f32) -> String {
     let mut unit = 0;
@@ -60,7 +60,10 @@ async fn test_download(url: &str) -> SError<TestResult> {
     // println!("start test for {}", url);
     let mut downloaded = 0usize;
     let client = reqwest::Client::new();
-    client.execute(Request::new(Method::HEAD, url.parse()?)).await?;
+    if let Err(e) = client.execute(Request::new(Method::HEAD, url.parse()?)).await{
+        println!("download error:{} url:{}",e,url);
+        return Err(e.into());
+    }
     let start_time = now();
     'timeout: while now() - start_time < TEST_TIME {  // 时间不到就一直下载数据
         let mut req = Request::new(Method::GET, url.parse()?);
@@ -79,6 +82,7 @@ async fn test_download(url: &str) -> SError<TestResult> {
                     None => break,
                 }
             }
+            println!("{} download success",url);
         } else {
             return Err(std::io::Error::from(ErrorKind::NotFound).into());
         }

@@ -8,7 +8,7 @@ use std::io::ErrorKind;
 type SError<T> = Result<T, Box<dyn Error + Send + Sync>>;
 
 static UNITS: [&str; 3] = ["B/s", "KB/s", "MB/s"];
-static TEST_TIME: i64 = 15000;
+static TEST_TIME: i64 = 60*1000;
 
 fn show_speed(mut speed: f32) -> String {
     let mut unit = 0;
@@ -46,6 +46,9 @@ async fn main() {
         tokio::spawn(test_download("http://dtapp-pub.dingtalk.com/dingtalk-desktop/mac_dmg/Release/DingTalk_v7.0.20.13_29200617_x86.dmg")),
         tokio::spawn(test_download("http://issuepcdn.baidupcs.com/issue/netdisk/yunguanjia/BaiduNetdisk_7.26.0.10.exe")),
         tokio::spawn(test_download("http://consumer.huawei.com/content/dam/huawei-cbg-site/cn/mkt/mobileservices/browser/exe/PCforX64.exe")),
+        tokio::spawn(test_download("https://client.wmpvp.com/download/perfectworldarena_win32_v1.0.25041011.exe")),
+        tokio::spawn(test_download("http://download.taobaocdn.com/wireless/taobao4android/latest/701483.apk")),
+        tokio::spawn(test_download("https://lf9-apk.ugapk.cn/package/apk/aweme/1015_330901/aweme_43633312a_v1015_330901_2062_1744201727.apk"))
     ]).await;
 
     let mut total_speed = 0f32;
@@ -82,7 +85,7 @@ async fn test_download(url: &str) -> SError<TestResult> {
                     None => break,
                 }
             }
-            println!("{} download success",url);
+           // println!("{} download success",url);
         } else {
             return Err(std::io::Error::from(ErrorKind::NotFound).into());
         }

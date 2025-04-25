@@ -38,6 +38,14 @@ fn now() -> i64 {
 
 #[tokio::main]
 async fn main() {
+    // 获取程序执行参数
+    let args: Vec<String> = std::env::args().collect();
+    let threads = if args.len() == 2 {
+        args[1].parse::<usize>().unwrap_or(2)   
+    }else{
+        2
+    };
+
     // let results = futures::future::join_all(vec![
     //     tokio::spawn(test_download("http://pcclient.download.youku.com/iku-win-release/youkuclient_setup_9.2.15.1002.exe")),
     //     tokio::spawn(test_download("http://speedxbu.baidu.com/shurufa/ime/setup/BaiduPinyinSetup_5.9.2.1.exe")),
@@ -53,7 +61,7 @@ async fn main() {
 
     let mut tasks = vec![];
     let waste_url = "https://db.laomoe.com/data-waster-dummy";
-    for _i in 0..20 {
+    for _i in 0..threads {
         tasks.push(tokio::spawn(test_download(&waste_url)));
     }
     //println!("start test for {}", waste_url);
